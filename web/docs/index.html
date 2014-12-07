@@ -424,7 +424,7 @@ chart.filter(<span class="string">'Sunday'</span>);
 chart.filter(<span class="number">18</span>);</code></pre>
 <h4 id="-filters-">.filters()</h4>
 <p>Returns all current filters. This method does not perform defensive cloning of the internal
-filter array before returning, therefore any modification of the returned array will effect the
+filter array before returning, therefore any modification of the returned array will affect the
 chart&#39;s internal filter storage.</p>
 <h4 id="-onclick-datum-">.onClick(datum)</h4>
 <p>This function is passed to d3 as the onClick handler for each chart. The default behavior is to
@@ -445,6 +445,16 @@ chart.filterHandler(function(dimension, <span class="keyword">filter</span>){
     dimension.<span class="keyword">filter</span>(newFilter);
     <span class="keyword">return</span> newFilter; <span class="comment">// set the actual filter value to the new value</span>
 });</code></pre>
+<h4 id="-filtergroup-string-">.filterGroup([string])</h4>
+<p>Assigns this chart to a filter group.  Charts in the same filter group will be filtered
+together: they share the same brushing UI and when the filter changes, it will only be
+applied once (by the first chart added to the group).</p>
+<p>Limitations:</p>
+<ul>
+<li>The charts should be on the same dimension, otherwise they will observe the filtering</li>
+<li>The charts should use the same <a href="#Filters">Filter Type</a>, otherwise they will not
+be able to interpret the filter data and will probably break.</li>
+</ul>
 <h4 id="-keyaccessor-keyaccessorfunction-">.keyAccessor([keyAccessorFunction])</h4>
 <p>Set or get the key accessor function. The key accessor function is used to retrieve the key
 value from the crossfilter group. Key values are used differently in different charts, for

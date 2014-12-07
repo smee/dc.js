@@ -36,7 +36,7 @@ var dc = {
     _renderlet: null
 };
 
-dc.chartRegistry = function () {
+dc.chartRegistrar = function () {
     // chartGroup:string => charts:array
     var _chartMap = {};
 
@@ -90,7 +90,14 @@ dc.chartRegistry = function () {
             return _chartMap[group];
         }
     };
-}();
+};
+
+// groups for redraw/render
+dc.chartRegistry = dc.chartRegistrar();
+
+// groups for filtering
+dc.filterGroupRegistry = dc.chartRegistrar();
+
 /*jshint +W062 */
 /*jshint +W079*/
 

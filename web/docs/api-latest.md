@@ -401,7 +401,7 @@ chart.filter(18);
 
 #### .filters()
 Returns all current filters. This method does not perform defensive cloning of the internal
-filter array before returning, therefore any modification of the returned array will effect the
+filter array before returning, therefore any modification of the returned array will affect the
 chart's internal filter storage.
 
 #### .onClick(datum)
@@ -427,6 +427,16 @@ chart.filterHandler(function(dimension, filter){
     return newFilter; // set the actual filter value to the new value
 });
 ```
+
+#### .filterGroup([string])
+Assigns this chart to a filter group.  Charts in the same filter group will be filtered
+together: they share the same brushing UI and when the filter changes, it will only be
+applied once (by the first chart added to the group).
+
+Limitations:
+ * The charts should be on the same dimension, otherwise they will observe the filtering
+ * The charts should use the same [Filter Type](#Filters), otherwise they will not
+be able to interpret the filter data and will probably break.
 
 #### .keyAccessor([keyAccessorFunction])
 Set or get the key accessor function. The key accessor function is used to retrieve the key
