@@ -299,8 +299,8 @@ data is loaded in the background using `crossfilter.add()`).
 
 #### .hasFilterHandler([function])
 Set or get the has filter handler. The has filter handler is a function that checks to see if
-the chart's current filters include a specific filter.  Using a custom has filter handler allows
-you to change the way filters are checked for and replaced.
+the chart's current filters (passed in the first argument) include a specific filter.  Using
+a custom has filter handler allows you to change the way filters are checked for and replaced.
 
 ```js
 // default has filter handler
@@ -329,7 +329,7 @@ filter from the chart's current filters. Using a custom remove filter handler al
 change how filters are removed or perform additional work when removing a filter, e.g. when
 using a filter server other than crossfilter.
 
-Any changes should modify the `filters` array argument and return that array.
+The handler should return a new or modified array as the result.
 
 ```js
 // default remove filter handler
@@ -355,7 +355,7 @@ the chart's filter list. Using a custom add filter handler allows you to change 
 are added or perform additional work when adding a filter, e.g. when using a filter server other
 than crossfilter.
 
-Any changes should modify the `filters` array argument and return that array.
+The handler should return a new or modified array as the result.
 
 ```js
 // default add filter handler
@@ -376,7 +376,7 @@ chart's filter list by returning a new list. Using a custom reset filter handler
 change the way filters are reset, or perform additional work when resetting the filters,
 e.g. when using a filter server other than crossfilter.
 
-This function should return an array.
+The handler should return a new or modified array as the result.
 
 ```js
 // default remove filter handler

@@ -545,8 +545,8 @@ dc.baseMixin = function (_chart) {
     /**
     #### .hasFilterHandler([function])
     Set or get the has filter handler. The has filter handler is a function that checks to see if
-    the chart's current filters include a specific filter.  Using a custom has filter handler allows
-    you to change the way filters are checked for and replaced.
+    the chart's current filters (passed in the first argument) include a specific filter.  Using
+    a custom has filter handler allows you to change the way filters are checked for and replaced.
 
     ```js
     // default has filter handler
@@ -600,7 +600,7 @@ dc.baseMixin = function (_chart) {
     change how filters are removed or perform additional work when removing a filter, e.g. when
     using a filter server other than crossfilter.
 
-    Any changes should modify the `filters` array argument and return that array.
+    The handler should return a new or modified array as the result.
 
     ```js
     // default remove filter handler
@@ -640,7 +640,7 @@ dc.baseMixin = function (_chart) {
     are added or perform additional work when adding a filter, e.g. when using a filter server other
     than crossfilter.
 
-    Any changes should modify the `filters` array argument and return that array.
+    The handler should return a new or modified array as the result.
 
     ```js
     // default add filter handler
@@ -674,7 +674,7 @@ dc.baseMixin = function (_chart) {
     change the way filters are reset, or perform additional work when resetting the filters,
     e.g. when using a filter server other than crossfilter.
 
-    This function should return an array.
+    The handler should return a new or modified array as the result.
 
     ```js
     // default remove filter handler
@@ -696,11 +696,14 @@ dc.baseMixin = function (_chart) {
         return _chart;
     };
 
-    function applyFilters() {
+    function applyFilters(filters) {
         if (_chart.dimension() && _chart.dimension().filter) {
-            var fs = _filterHandler(_chart.dimension(), _filters);
-            _filters = fs ? fs : _filters;
+            var fs = _filterHandler(_chart.dimension(), filters);
+            if (fs) {
+                filters = fs;
+            }
         }
+        return filters;
     }
 
     _chart.replaceFilter = function (_) {
@@ -740,28 +743,28 @@ dc.baseMixin = function (_chart) {
 
     // determines the new filters from element, and sets dimension.filter
     _chart._modifyFilter = function (_, replace) {
+        var filters = _filters;
         if (replace) {
-            _filters = [];
+            filters = _resetFilterHandler(filters);
         }
         if (_ instanceof Array && _[0] instanceof Array && !_.isFiltered) {
-            _[0].forEach(function (d) {
-                if (_chart.hasFilter(d)) {
-                    _removeFilterHandler(_filters, d);
+            _[0].forEach(function (f) {
+                if (_hasFilterHandler(filters, f)) {
+                    filters = _removeFilterHandler(filters, f);
                 } else {
-                    _addFilterHandler(_filters, d);
+                    filters = _addFilterHandler(filters, f);
                 }
             });
         } else if (_ === null) {
-            _filters = _resetFilterHandler(_filters);
+            filters = _resetFilterHandler(filters);
         } else {
             if (_chart.hasFilter(_)) {
-                _removeFilterHandler(_filters, _);
+                filters = _removeFilterHandler(filters, _);
             } else {
-                _addFilterHandler(_filters, _);
+                filters = _addFilterHandler(filters, _);
             }
         }
-        applyFilters();
-        return _filters;
+        return applyFilters(filters);
     };
 
     // sets the filter for UI purposes, but doesn't tell crossfilter
