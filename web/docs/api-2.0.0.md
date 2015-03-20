@@ -27,7 +27,7 @@
   * [Heat Map](#heat-map)
   * [Box Plot](#box-plot)
 
-#### Version 2.1.0-dev
+#### Version 2.0.0-alpha.5
 The entire dc.js library is scoped under the **dc** name space. It does not introduce anything else
 into the global name space.
 #### Function Chaining
@@ -299,8 +299,8 @@ data is loaded in the background using `crossfilter.add()`).
 
 #### .hasFilterHandler([function])
 Set or get the has filter handler. The has filter handler is a function that checks to see if
-the chart's current filters (passed in the first argument) include a specific filter.  Using
-a custom has filter handler allows you to change the way filters are checked for and replaced.
+the chart's current filters include a specific filter.  Using a custom has filter handler allows
+you to change the way filters are checked for and replaced.
 
 ```js
 // default has filter handler
@@ -329,7 +329,7 @@ filter from the chart's current filters. Using a custom remove filter handler al
 change how filters are removed or perform additional work when removing a filter, e.g. when
 using a filter server other than crossfilter.
 
-The handler should return a new or modified array as the result.
+Any changes should modify the `filters` array argument and return that array.
 
 ```js
 // default remove filter handler
@@ -355,7 +355,7 @@ the chart's filter list. Using a custom add filter handler allows you to change 
 are added or perform additional work when adding a filter, e.g. when using a filter server other
 than crossfilter.
 
-The handler should return a new or modified array as the result.
+Any changes should modify the `filters` array argument and return that array.
 
 ```js
 // default add filter handler
@@ -376,7 +376,7 @@ chart's filter list by returning a new list. Using a custom reset filter handler
 change the way filters are reset, or perform additional work when resetting the filters,
 e.g. when using a filter server other than crossfilter.
 
-The handler should return a new or modified array as the result.
+This function should return an array.
 
 ```js
 // default remove filter handler
@@ -401,7 +401,7 @@ chart.filter(18);
 
 #### .filters()
 Returns all current filters. This method does not perform defensive cloning of the internal
-filter array before returning, therefore any modification of the returned array will affect the
+filter array before returning, therefore any modification of the returned array will effect the
 chart's internal filter storage.
 
 #### .onClick(datum)
@@ -427,16 +427,6 @@ chart.filterHandler(function(dimension, filter){
     return newFilter; // set the actual filter value to the new value
 });
 ```
-
-#### .filterGroup([string])
-Assigns this chart to a filter group.  Charts in the same filter group will be filtered
-together: they share the same brushing UI and when the filter changes, it will only be
-applied once (by the first chart added to the group).
-
-Limitations:
- * The charts should be on the same dimension, otherwise they will observe the filtering
- * The charts should use the same [Filter Type](#Filters), otherwise they will not
-be able to interpret the filter data and will probably break.
 
 #### .keyAccessor([keyAccessorFunction])
 Set or get the key accessor function. The key accessor function is used to retrieve the key
@@ -505,9 +495,6 @@ to an individual chart.  Each time a chart is rerendered or redrawn the renderle
 right after the chart finishes its own drawing routine, giving you a way to modify the svg
 elements. Renderlet functions take the chart instance as the only input parameter and you can
 use the dc API or use raw d3 to achieve pretty much any effect.
-
-@Deprecated - Use [Listeners](#Listeners) with a 'renderlet' prefix
-Generates a random key for the renderlet, which makes it hard for removal.
 ```js
 // renderlet function
 chart.renderlet(function(chart){
@@ -551,10 +538,6 @@ chart.options({dimension: myDimension, group: myGroup});
 
 ## Listeners
 All dc chart instance supports the following listeners.
-
-#### .on('renderlet', function(chart, filter){...})
-This listener function will be invoked after transitions after redraw and render. Replaces the
-deprecated `.renderlet()` method.
 
 #### .on('preRender', function(chart){...})
 This listener function will be invoked before chart rendering.
@@ -1116,8 +1099,7 @@ functions, splines, and cubic interpolation.  This is passed to
 [d3.svg.area.interpolate](https://github.com/mbostock/d3/wiki/SVG-Shapes#area_interpolate),
 where you can find a complete list of valid arguments
 
-#### .tension([value])
-Gets or sets the tension to use for lines drawn, in the range 0 to 1.
+#### .tension([value]) Gets or sets the tension to use for lines drawn, in the range 0 to 1.
 This parameter further customizes the interpolation behavior.  It is passed to
 [d3.svg.line.tension](https://github.com/mbostock/d3/wiki/SVG-Shapes#line_tension) and
 [d3.svg.area.tension](https://github.com/mbostock/d3/wiki/SVG-Shapes#area_tension).  Default:
@@ -1944,29 +1926,15 @@ var heatMap1 = dc.heatMap('#chart-container1');
 var heatMap2 = dc.heatMap('#chart-container2', 'chartGroupA');
 ```
 
-#### .colsLabel([labelFunction])
-Set or get the column label function. The chart class uses this function to render
-column labels on the X axis. It is passed the column name.
-```js
-// the default label function just returns the name
-chart.colsLabel(function(d) { return d; });
-```
-
-#### .rowsLabel([labelFunction])
-Set or get the row label function. The chart class uses this function to render
-row labels on the Y axis. It is passed the row name.
-```js
-// the default label function just returns the name
-chart.rowsLabel(function(d) { return d; });
-```
-
 #### .rows([values])
 Gets or sets the values used to create the rows of the heatmap, as an array. By default, all
-the values will be fetched from the data using the value accessor.
+the values will be fetched from the data using the value accessor, and they will be sorted in
+ascending order.
 
 #### .cols([keys])
 Gets or sets the keys used to create the columns of the heatmap, as an array. By default, all
-the values will be fetched from the data using the key accessor.
+the values will be fetched from the data using the key accessor, and they will be sorted in
+ascending order.
 
 #### .boxOnClick([handler])
 Gets or sets the handler that fires when an individual cell is clicked in the heatmap.

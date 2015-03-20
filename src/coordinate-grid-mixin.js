@@ -917,17 +917,15 @@ dc.coordinateGridMixin = function (_chart) {
     // borrowed from Crossfilter example
     _chart.resizeHandlePath = function (d) {
         var e = +(d === 'e'), x = e ? 1 : -1, y = brushHeight() / 3;
-        /*jshint -W014 */
-        return 'M' + (0.5 * x) + ',' + y
-            + 'A6,6 0 0 ' + e + ' ' + (6.5 * x) + ',' + (y + 6)
-            + 'V' + (2 * y - 6)
-            + 'A6,6 0 0 ' + e + ' ' + (0.5 * x) + ',' + (2 * y)
-            + 'Z'
-            + 'M' + (2.5 * x) + ',' + (y + 8)
-            + 'V' + (2 * y - 8)
-            + 'M' + (4.5 * x) + ',' + (y + 8)
-            + 'V' + (2 * y - 8);
-        /*jshint +W014 */
+        return 'M' + (0.5 * x) + ',' + y +
+            'A6,6 0 0 ' + e + ' ' + (6.5 * x) + ',' + (y + 6) +
+            'V' + (2 * y - 6) +
+            'A6,6 0 0 ' + e + ' ' + (0.5 * x) + ',' + (2 * y) +
+            'Z' +
+            'M' + (2.5 * x) + ',' + (y + 8) +
+            'V' + (2 * y - 8) +
+            'M' + (4.5 * x) + ',' + (y + 8) +
+            'V' + (2 * y - 8);
     };
 
     function getClipPathId() {
@@ -1028,7 +1026,8 @@ dc.coordinateGridMixin = function (_chart) {
         _hasBeenMouseZoomable = true;
         _zoom.x(_chart.x())
             .scaleExtent(_zoomScale)
-            .size([_chart.width(), _chart.height()]);
+            .size([_chart.width(), _chart.height()])
+            .duration(_chart.transitionDuration());
         _chart.root().call(_zoom);
     };
 

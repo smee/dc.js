@@ -102,6 +102,24 @@ describe("dc.heatmap", function() {
             expect(xaxisTexts[0][1].textContent).toEqual('2');
         });
 
+        describe('with custom labels', function() {
+            beforeEach(function() {
+                chart.colsLabel(function(x) { return 'col ' + x;})
+                    .rowsLabel(function(x) { return 'row ' + x;})
+                    .redraw();
+            });
+            it('should display the custom labels on the x axis', function() {
+                var xaxisTexts = chart.selectAll(".cols.axis text");
+                expect(xaxisTexts[0][0].textContent).toEqual('col 1');
+                expect(xaxisTexts[0][1].textContent).toEqual('col 2');
+            });
+            it('should display the custom labels on the y axis', function() {
+                var yaxisTexts = chart.selectAll(".rows.axis text");
+                expect(yaxisTexts[0][0].textContent).toEqual('row 1');
+                expect(yaxisTexts[0][1].textContent).toEqual('row 2');
+            });
+        });
+
         describe('box radius', function() {
             it('should default the x', function () {
                 chart.select('rect.heat-box').each(function () {
@@ -132,6 +150,65 @@ describe("dc.heatmap", function() {
                     expect(this.getAttribute('ry')).toBe('7');
                 });
             });
+        });
+
+    });
+
+    describe('override scale domains', function () {
+        beforeEach( function () {
+            chart.rows([1]);
+            chart.cols([1]);
+            chart.render();
+        });
+
+        it ('should only have 1 row on the y axis', function () {
+            var yaxisTexts = chart.selectAll(".rows.axis text");
+            expect(yaxisTexts[0].length).toEqual(1);
+            expect(yaxisTexts[0][0].textContent).toEqual('1');
+        });
+
+        it ('should only have 1 col on the x axis', function () {
+            var xaxisTexts = chart.selectAll(".cols.axis text");
+            expect(xaxisTexts[0].length).toEqual(1);
+            expect(xaxisTexts[0][0].textContent).toEqual('1');
+        });
+
+        it ('should reset the rows to using the chart data on the y axis', function () {
+            chart.rows(null);
+            chart.redraw();
+            var yaxisTexts = chart.selectAll(".rows.axis text");
+            expect(yaxisTexts[0].length).toEqual(2);
+            expect(yaxisTexts[0][0].textContent).toEqual('1');
+            expect(yaxisTexts[0][1].textContent).toEqual('2');
+        });
+
+        it ('should reset the cols to using the chart data on the y axis', function () {
+            chart.cols(null);
+            chart.redraw();
+            var xaxisTexts = chart.selectAll(".cols.axis text");
+            expect(xaxisTexts[0].length).toEqual(2);
+            expect(xaxisTexts[0][0].textContent).toEqual('1');
+            expect(xaxisTexts[0][1].textContent).toEqual('2');
+        });
+    });
+
+    describe('use a custom ordering on x and y axes', function () {
+        beforeEach( function () {
+            chart.rowOrdering(d3.descending);
+            chart.colOrdering(d3.descending);
+            chart.render();
+        });
+
+        it ('should have descending rows', function () {
+            var yaxisTexts = chart.selectAll(".rows.axis text");
+            expect(yaxisTexts[0][0].textContent).toEqual('2');
+            expect(yaxisTexts[0][1].textContent).toEqual('1');
+        });
+
+        it ('should have descending cols', function () {
+            var yaxisTexts = chart.selectAll(".rows.axis text");
+            expect(yaxisTexts[0][0].textContent).toEqual('2');
+            expect(yaxisTexts[0][1].textContent).toEqual('1');
         });
     });
 
